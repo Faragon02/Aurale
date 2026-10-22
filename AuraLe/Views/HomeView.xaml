@@ -58,7 +58,6 @@
                                 <UniformGrid Columns="3">
                                     <Button Content="▶ 덱으로 재생" Style="{StaticResource AccentButtonStyle}"
                                             Command="{Binding SwitchViewCommand}" CommandParameter="Player" Margin="0,0,3,0" Height="36"/>
-                                            Command="{Binding SwitchViewCommand}" CommandParameter="Download" Margin="2,0,2,0" Height="36"/>
                                     <Button Content="🎹 쿼티 연주" Style="{StaticResource RetroButtonStyle}"
                                             Command="{Binding SwitchViewCommand}" CommandParameter="Synth" Margin="2,0,2,0" Height="36"
                                             BorderBrush="#00F0FF" Foreground="#00F0FF"/>
