@@ -1,0 +1,194 @@
+<Window x:Class="AuraLe.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:AuraLe.ViewModels"
+        xmlns:views="clr-namespace:AuraLe.Views"
+        mc:Ignorable="d"
+        Title="{Binding HeaderTitle}"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Icon="Assets/app.ico"
+        Opacity="{Binding WindowOpacity}">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <!-- 전체 윈도우 레이아웃: 좌측 카세트 본체 + 우측 플레이리스트 사이드 랙 -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Column 0: 메인 카세트 워크맨 본체 (폭 680px) -->
+            <ColumnDefinition Width="Auto"/>
+            <!-- Column 1: 우측 플레이리스트 사이드 랙 (폭 290px) -->
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ================= [COLUMN 0] 메인 카세트 워크맨 본체 ================= -->
+        <Border Grid.Column="0" Margin="10" CornerRadius="18" Background="#14141A" BorderBrush="#2C2C3A" BorderThickness="1.5">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Width" Value="680"/>
+                    <Style.Triggers>
+                        <!-- 쿼티 연주 모드일 때만 건반 가독성과 여백을 위해 가로폭을 750px로 자동 확장 변형 -->
+                        <DataTrigger Binding="{Binding IsSynthView}" Value="True">
+                            <Setter Property="Width" Value="750"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="24" ShadowDepth="6" Direction="270" Color="#000000" Opacity="0.65"/>
+            </Border.Effect>
+
+            <Grid>
+                <!-- 창 전체 은은한 앰비언트 배경 이미지 틴트 -->
+                <Border CornerRadius="18" ClipToBounds="True">
+                    <Border.Background>
+                        <ImageBrush ImageSource="{Binding BackgroundImagePath}"
+                                    Stretch="UniformToFill"
+                                    Opacity="0.10"
+                                    AlignmentX="Center"
+                                    AlignmentY="Center"/>
+                    </Border.Background>
+                </Border>
+
+                <Grid Margin="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- 상단 통합 헤더 바 -->
+                        <RowDefinition Height="*"/>    <!-- 메인 컨텐츠 영역 (단일 셀에서 뷰 완전 격리 전환) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- ================= 상단 통합 헤더 바 ================= -->
+                    <Border Grid.Row="0" Background="#1A1A24" CornerRadius="18,18,0,0" Padding="14,8" MouseLeftButtonDown="Header_MouseDown" Cursor="SizeAll">
+                        <Grid>
+                            <!-- 좌측: 재생 상태 LED + 로고 + 프로그램 타이틀 -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="9" Height="9" CornerRadius="4.5" Margin="0,0,8,0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#33FF33"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+                                                    <Setter Property="Background" Value="#444455"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+
+                                <Border Background="#FFE600" CornerRadius="4" Padding="5,2" Margin="0,0,8,0">
+                                    <TextBlock Text="Z" FontWeight="Black" FontSize="12" Foreground="#0E0E12"/>
+                                </Border>
+
+                                <TextBlock Text="{Binding HeaderTitle}" FontWeight="Bold" FontSize="13" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                <TextBlock Text=" • MODEL-01" FontSize="11" Foreground="{Binding ThemeAccentBrush}" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- 우측: [홈] [재생] [다운] [서랍] + [─] [✕] -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Button Content="🏠 홈" Command="{Binding SwitchViewCommand}" CommandParameter="Home" Margin="0,0,4,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                            <Setter Property="Padding" Value="8,4"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsHomeView}" Value="True">
+                                                    <Setter Property="Background" Value="#FFE600"/>
+                                                    <Setter Property="Foreground" Value="#0A0A10"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Setter Property="BorderBrush" Value="#FFE600"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Content="▶ 재생" Command="{Binding SwitchViewCommand}" CommandParameter="Player" Margin="0,0,4,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                            <Setter Property="Padding" Value="9,4"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPlayerView}" Value="True">
+                                                    <Setter Property="Background" Value="#00F0FF"/>
+                                                    <Setter Property="Foreground" Value="#0A0A10"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Setter Property="BorderBrush" Value="#00F0FF"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+
+                                <Button Content="⚙ 설정" Command="{Binding SwitchViewCommand}" CommandParameter="Settings" Margin="0,0,4,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                            <Setter Property="Padding" Value="8,4"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSettingsView}" Value="True">
+                                                    <Setter Property="Background" Value="{Binding ThemeAccentBrush}"/>
+                                                    <Setter Property="Foreground" Value="#0A0A10"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Setter Property="BorderBrush" Value="{Binding ThemeAccentBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Content="⏏ 서랍" Command="{Binding ToggleDrawerCommand}" Margin="0,0,8,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                            <Setter Property="Padding" Value="8,4"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsDrawerOpen}" Value="True">
+                                                    <Setter Property="Background" Value="#32354A"/>
+                                                    <Setter Property="Foreground" Value="#00F0FF"/>
+                                                    <Setter Property="BorderBrush" Value="#00F0FF"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Border Width="1" Height="16" Background="#38384A" Margin="2,0,8,0"/>
+
+                                <Button Content="─" Width="26" Height="24" Background="Transparent" Foreground="#8E8E9F" BorderThickness="0"
+                                        Cursor="Hand" Click="MinimizeButton_Click" FontSize="12" Margin="0,0,2,0"/>
+                                <Button Content="✕" Width="26" Height="24" Background="Transparent" Foreground="#FF5555" BorderThickness="0"
+                                        Cursor="Hand" Click="CloseButton_Click" FontSize="12" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ================= 화면 뷰 전환 컨텐츠 (완전 분리된 단일 Grid 영역) ================= -->
+                    <Grid Grid.Row="1">
+                        <!-- 4.1 메인 플레이어 뷰 (Cassette Deck) -->
+                        <views:CassetteDeckView Visibility="{Binding IsPlayerView, Converter={StaticResource BoolToVis}}"/>
+
+                        <!-- 4.2 다운로드 뷰 (🔴 REC Mode) -->
+
+                        <!-- 4.0 홈 대시보드 뷰 (🏠 Home View) -->
+                        <views:HomeView Visibility="{Binding IsHomeView, Converter={StaticResource BoolToVis}}"/>
+
+                        <!-- 4.3 설정 뷰 (⚙ Settings View) -->
+                        <views:SettingsView Visibility="{Binding IsSettingsView, Converter={StaticResource BoolToVis}}"/>
+
+                        <!-- 4.4 QWERTY 키보드 연주 뷰 (🎹 Synth View) : 홈/재생/다운/설정 모드 시 절대 노출되지 않도록 완전 격리 -->
+                        <Grid Visibility="{Binding IsSynthView, Converter={StaticResource BoolToVis}}">
+                            <views:SynthDeckView DataContext="{Binding Synth}"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- ================= [COLUMN 1] 우측 플레이리스트 사이드 랙 (도킹 연동) ================= -->
+        <views:PlaylistDrawerView Grid.Column="1" VerticalAlignment="Stretch" Visibility="{Binding IsDrawerOpen, Converter={StaticResource BoolToVis}}"/>
+    </Grid>
+</Window>

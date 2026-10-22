@@ -1,0 +1,269 @@
+<UserControl x:Class="AuraLe.Views.CassetteDeckView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <!-- ================= 4.1 메인 플레이어 뷰 (Cassette Deck: 리얼 카세트 일체형) ================= -->
+    <Grid Margin="14,8,14,12">
+        <!-- 네온 발광(Glow) 외곽 블러 헤일로 (IsNeonGlow 켬 상태일 때 동적 테마 색상으로 발광) -->
+        <Border Height="370" CornerRadius="18"
+                BorderBrush="{Binding ThemeAccentBrush}" BorderThickness="3"
+                Opacity="0.75" IsHitTestVisible="False"
+                Visibility="{Binding IsNeonGlow, Converter={StaticResource BoolToVis}}">
+            <Border.Effect>
+                <BlurEffect Radius="16"/>
+            </Border.Effect>
+        </Border>
+
+        <!-- 카세트 테이프 본체 외형 쉘 (가로:세로 약 1.55:1 리얼 카세트 비율) -->
+        <Border Height="370" CornerRadius="18" Background="#0C0F17" BorderBrush="{Binding ThemeAccentBrush}" BorderThickness="1.5">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.5"/>
+            </Border.Effect>
+
+            <Grid>
+                <!-- ================= 4개 모서리 나사 홀 (Screw Holes) ================= -->
+                <!-- 좌상단 나사 -->
+                <Grid Width="22" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,8,0,0">
+                    <Ellipse Fill="#060910" Stroke="#2A3C50" StrokeThickness="2"/>
+                    <Line X1="4" Y1="11" X2="18" Y2="11" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Line X1="11" Y1="4" X2="11" Y2="18" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                </Grid>
+                <!-- 우상단 나사 -->
+                <Grid Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0">
+                    <Ellipse Fill="#060910" Stroke="#2A3C50" StrokeThickness="2"/>
+                    <Line X1="4" Y1="11" X2="18" Y2="11" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Line X1="11" Y1="4" X2="11" Y2="18" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                </Grid>
+                <!-- 좌하단 나사 -->
+                <Grid Width="22" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="8,0,0,8">
+                    <Ellipse Fill="#060910" Stroke="#2A3C50" StrokeThickness="2"/>
+                    <Line X1="4" Y1="11" X2="18" Y2="11" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Line X1="11" Y1="4" X2="11" Y2="18" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                </Grid>
+                <!-- 우하단 나사 -->
+                <Grid Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8">
+                    <Ellipse Fill="#060910" Stroke="#2A3C50" StrokeThickness="2"/>
+                    <Line X1="4" Y1="11" X2="18" Y2="11" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Line X1="11" Y1="4" X2="11" Y2="18" Stroke="#8EABC7" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                </Grid>
+
+                <!-- ================= 메인 본체 내부 콘텐츠 ================= -->
+                <StackPanel Margin="0">
+                    <!-- 1. 내부 라벨 패널 (상단 이미지/릴 + 가로분할선 + 하단 트랙/시크바) -->
+                    <Border Margin="28,25,28,4" CornerRadius="12" Background="#101724" BorderBrush="#1C2E42" BorderThickness="1.5" ClipToBounds="True">
+                        <StackPanel>
+                            <!-- [라벨 상단부] 일러스트 배경 + 릴 휠 & 타이머 창 -->
+                            <Grid Height="220">
+                                <!-- 배경 일러스트 이미지 (상단 잘림 방지: VerticalAlignment="Top") -->
+                                <Image Source="{Binding BackgroundImagePath}"
+                                       Stretch="UniformToFill"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       Opacity="0.9"
+                                       Visibility="{Binding HasBackgroundImage, Converter={StaticResource BoolToVis}}">
+                                    <Image.RenderTransform>
+                                        <TranslateTransform X="{Binding BackgroundImageOffsetX}"/>
+                                    </Image.RenderTransform>
+                                </Image>
+
+                                <!-- 기본 레트로 카세트 그래픽 (배경 없을 때) -->
+                                <Grid Visibility="{Binding HasBackgroundImage, Converter={StaticResource InvBoolToVis}}">
+                                    <Border Background="#0C121B"/>
+                                    <TextBlock Text="AuraLe CASSETTE TAPE // STEREO CH-01"
+                                               FontSize="12" FontWeight="Bold" Foreground="#2A3C50"
+                                               HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0"/>
+                                    <Border Height="50" Margin="60,0" Background="#141E2C" CornerRadius="6" VerticalAlignment="Center" Opacity="0.4"/>
+                                </Grid>
+
+                                <!-- 글래스 반사 하이라이트 -->
+                                <Border BorderBrush="#1500F0FF" BorderThickness="1">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#14FFFFFF" Offset="0.0"/>
+                                            <GradientStop Color="#00000000" Offset="0.45"/>
+                                            <GradientStop Color="#1000F0FF" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+
+                                <!-- 중앙 릴 휠 & 타이머 일체형 캡슐 바 (하단에 안정적으로 배치) -->
+                                <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,16"
+                                        Background="#0C121C" BorderBrush="{Binding ThemeAccentBrush}" BorderThickness="1.5"
+                                        CornerRadius="29" Height="58" Padding="4,0">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <!-- [좌측 휠] (50x50) -->
+                                        <Grid Width="50" Height="50">
+                                            <Ellipse Fill="#05080E" Width="50" Height="50"/>
+                                            <Image Source="{Binding ReelImageSource}" Width="50" Height="50"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                                   Style="{StaticResource RotatingReelStyle}"/>
+                                            <Ellipse Width="16" Height="16" Fill="#060A10" Stroke="{Binding ThemeAccentBrush}" StrokeThickness="1.5"
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <!-- [중앙 타이머 창] (02:15 / 04:09) -->
+                                        <Border Background="#060A12" BorderBrush="#1C2E42" BorderThickness="1" CornerRadius="6"
+                                                Padding="14,3" Height="28" VerticalAlignment="Center" Margin="14,0,14,0">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding CurrentTimeText, FallbackValue='00:00'}"
+                                                           FontWeight="Bold" FontSize="13" Foreground="{Binding ThemeAccentBrush}" FontFamily="Consolas, Segoe UI"/>
+                                                <TextBlock Text=" / " FontSize="12" Foreground="#6C7A89" Margin="4,0"/>
+                                                <TextBlock Text="{Binding TotalTimeText, FallbackValue='00:00'}"
+                                                           FontSize="12" Foreground="#A0B0C0" FontFamily="Consolas, Segoe UI"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- [우측 휠] (50x50) -->
+                                        <Grid Width="50" Height="50">
+                                            <Ellipse Fill="#05080E" Width="50" Height="50"/>
+                                            <Image Source="{Binding ReelImageSource}" Width="50" Height="50"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                                   Style="{StaticResource RotatingReelStyle}"/>
+                                            <Ellipse Width="16" Height="16" Fill="#060A10" Stroke="{Binding ThemeAccentBrush}" StrokeThickness="1.5"
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- ================= 가로 분할선 ================= -->
+                            <Line X1="0" Y1="0" X2="650" Y2="0" Stroke="{Binding ThemeAccentBrush}" StrokeThickness="1.5" Opacity="0.55"/>
+
+                            <!-- [라벨 하단부] TRACK: 곡 제목 + 재생 시크바 -->
+                            <Border Background="#0A0E18" Padding="14,8,14,10">
+                                <StackPanel>
+                                    <!-- TRACK: 곡 제목 -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                        <TextBlock Text="TRACK: " FontSize="11" FontWeight="Bold" Foreground="#FFE600" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding CurrentTrack.Title, FallbackValue='NO CASSETTE INSERTED'}"
+                                                   FontWeight="Bold" FontSize="12" Foreground="#FFFFFF"
+                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="520"/>
+                                    </StackPanel>
+
+                                    <!-- 시크 슬라이더 (재생바) -->
+                                    <Slider x:Name="SeekSlider" Margin="0,0,0,0" Style="{StaticResource CyanSliderStyle}"
+                                            Minimum="0" Maximum="{Binding TotalDurationSeconds}"
+                                            Value="{Binding CurrentPositionSeconds, Mode=TwoWay}"
+                                            MouseMove="SeekSlider_MouseMove"
+                                            PreviewMouseUp="SeekSlider_PreviewMouseUp"
+                                            LostMouseCapture="SeekSlider_LostMouseCapture"
+                                            ValueChanged="SeekSlider_ValueChanged"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 2. 최하단 영역: 좌측 셔플/반복 모드 + 중앙 사다리꼴 헤드(재생버튼 5개) + 우측 볼륨 컨트롤 -->
+                    <Grid Height="48" Margin="0,4,0,0">
+                        <!-- 좌측: 모드 버튼 [🔁 반복] [🔀 셔플] (나사와 사다리꼴 헤드 사이) -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="36,0,0,0">
+                            <!-- 1. 반복(순환: OFF ➔ ALL ➔ ONE) 버튼 -->
+                            <Button Command="{Binding ToggleRepeatCommand}"
+                                    ToolTip="{Binding RepeatToolTip}"
+                                    Width="34" Height="28" Margin="0,0,6,0"
+                                    Background="#101520"
+                                    BorderBrush="{Binding RepeatButtonBorder}"
+                                    BorderThickness="1.5"
+                                    Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="6">
+                                            <Viewbox Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <!-- 둥근 루프 화살표 2개 -->
+                                                    <Path Data="M17 2 L21 6 L17 10 M3 11 V10 A4 4 0 0 1 7 6 H21 M7 22 L3 18 L7 14 M21 13 V14 A4 4 0 0 1 17 18 H3"
+                                                          Stroke="{Binding RepeatButtonForeground}" StrokeThickness="2.2"
+                                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                                    <!-- 중앙 숫자 '1' (한 곡 반복일 때만 또렷하게 표시) -->
+                                                    <Path Data="M11 9.5 L12 9 V15 M10.5 15 H13.5"
+                                                          Stroke="{Binding RepeatButtonForeground}" StrokeThickness="2.2"
+                                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                          Visibility="{Binding IsRepeatOne, Converter={StaticResource BoolToVis}}"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="btnBorder" Property="Background" Value="#1A2234"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <!-- 2. 셔플(랜덤) 버튼 -->
+                            <Button Command="{Binding ToggleShuffleCommand}"
+                                    ToolTip="{Binding ShuffleToolTip}"
+                                    Width="34" Height="28"
+                                    Background="#101520"
+                                    BorderBrush="{Binding ShuffleButtonBorder}"
+                                    BorderThickness="1.5"
+                                    Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="6">
+                                            <Viewbox Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <!-- 셔플 교차 화살표 -->
+                                                    <Path Data="M2 18 H3.4 C4.7 18 5.9 17.4 6.7 16.3 L12.8 7.7 C13.5 6.6 14.8 6 16.1 6 H22 M18 2 L22 6 L18 10 M2 6 H3.9 C5.4 6 6.8 6.9 7.5 8.2 M22 18 H16.1 C14.8 18 13.5 17.3 12.8 16.2 L12.3 15.4 M18 14 L22 18 L18 22"
+                                                          Stroke="{Binding ShuffleButtonForeground}" StrokeThickness="2.2"
+                                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="btnBorder" Property="Background" Value="#1A2234"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- 중앙: 사다리꼴 헤드 하우징 (재생 버튼 5개 + 가이드 홀 2개) -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="360" Height="44">
+                            <!-- 사다리꼴 배경 (윗변 300px, 밑변 360px) -->
+                            <Polygon Points="30,0 330,0 360,44 0,44" 
+                                     Fill="#121622" Stroke="{Binding ThemeAccentBrush}" StrokeThickness="1.5"/>
+
+                            <!-- 내부 재생 제어 버튼 5개 + 가이드 구멍 2개 -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <!-- 좌측 가이드 홀 (○) -->
+                                <Ellipse Width="12" Height="12" Fill="#060A10" Stroke="{Binding ThemeAccentBrush}" StrokeThickness="1.5" Margin="0,0,16,0"/>
+
+                                <!-- 재생 제어 버튼 5개 -->
+                                <Button Content="◀◀" ToolTip="이전곡" Style="{StaticResource RetroButtonStyle}" Command="{Binding PrevTrackCommand}" Width="36" Height="26" Margin="0,0,4,0" FontSize="10"/>
+                                <Button Content="▶" ToolTip="재생" Style="{StaticResource AccentButtonStyle}"
+                                        Background="{Binding ThemeAccentBrush}" BorderBrush="{Binding ThemeAccentBrush}"
+                                        Command="{Binding PlayCommand}" Width="40" Height="26" Margin="0,0,4,0" FontSize="13"/>
+                                <Button Content="⏸" ToolTip="일시정지" Style="{StaticResource RetroButtonStyle}" Command="{Binding PauseCommand}" Width="36" Height="26" Margin="0,0,4,0" FontSize="11"/>
+                                <Button Content="■" ToolTip="정지" Style="{StaticResource RetroButtonStyle}" Command="{Binding StopCommand}" Width="36" Height="26" Margin="0,0,4,0" FontSize="10"/>
+                                <Button Content="▶▶" ToolTip="다음곡" Style="{StaticResource RetroButtonStyle}" Command="{Binding NextTrackCommand}" Width="36" Height="26" Margin="0,0,16,0" FontSize="10"/>
+
+                                <!-- 우측 가이드 홀 (○) -->
+                                <Ellipse Width="12" Height="12" Fill="#060A10" Stroke="{Binding ThemeAccentBrush}" StrokeThickness="1.5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 우측: (🔊 볼륨 컨트롤) - 헤드 우측 & 나사 앞 공간 -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,32,0">
+                            <TextBlock Text="🔊" FontSize="12" Foreground="{Binding ThemeAccentBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <Slider Width="75" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1"
+                                    Value="{Binding Volume, Mode=TwoWay}"
+                                    Style="{StaticResource CyanSliderStyle}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

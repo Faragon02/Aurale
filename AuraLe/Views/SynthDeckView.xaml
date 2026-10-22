@@ -1,0 +1,449 @@
+<UserControl x:Class="AuraLe.Views.SynthDeckView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!-- 건반 기본 스타일 -->
+        <Style x:Key="KeyBoxStyle" TargetType="Border">
+            <Setter Property="Width" Value="82"/>
+            <Setter Property="Height" Value="62"/>
+            <Setter Property="Margin" Value="3,2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="#1C1C26"/>
+            <Setter Property="BorderBrush" Value="#323246"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Margin="14,8,14,12" CornerRadius="14" Background="#141822" BorderBrush="#00F0FF" BorderThickness="1.5" Padding="14,10">
+        <StackPanel>
+            <!-- ================= 상단 헤더: 타이틀 & 하단 모드 버튼 ================= -->
+            <StackPanel Margin="0,0,0,10">
+                <!-- 1열: 상단 타이틀 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#00F0FF" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                        <TextBlock Text="SYNTH" FontWeight="Black" FontSize="11" Foreground="#0E0E12"/>
+                    </Border>
+                    <TextBlock Text="AuraLe QWERTY KEYBOARD SYNTH" FontWeight="Bold" FontSize="13" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 2열: 음색 선택기 (이름 아래 배치) -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,0">
+                    <TextBlock Text="음색:" Foreground="#8A9AA8" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+
+                    <Button Content="🎹 피아노" Command="{Binding SelectWaveTypeCommand}" CommandParameter="piano" Margin="0,0,4,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Setter Property="Padding" Value="8,3"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPianoEP}" Value="True">
+                                        <Setter Property="Background" Value="#00F0FF"/>
+                                        <Setter Property="Foreground" Value="#0A0A10"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="BorderBrush" Value="#00F0FF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="🪕 하프" Command="{Binding SelectWaveTypeCommand}" CommandParameter="harp" Margin="0,0,4,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Setter Property="Padding" Value="8,3"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAcousticHarp}" Value="True">
+                                        <Setter Property="Background" Value="#33FF88"/>
+                                        <Setter Property="Foreground" Value="#0A0A10"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="BorderBrush" Value="#33FF88"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="🎸 통기타" Command="{Binding SelectWaveTypeCommand}" CommandParameter="guitar" Margin="0,0,4,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Setter Property="Padding" Value="8,3"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAcousticGuitar}" Value="True">
+                                        <Setter Property="Background" Value="#FFA834"/>
+                                        <Setter Property="Foreground" Value="#0A0A10"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="BorderBrush" Value="#FFA834"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="⚡ 일렉" Command="{Binding SelectWaveTypeCommand}" CommandParameter="electric" Margin="0,0,6,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Setter Property="Padding" Value="8,3"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsElectricGuitar}" Value="True">
+                                        <Setter Property="Background" Value="#BD00FF"/>
+                                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="BorderBrush" Value="#BD00FF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- 반음 모드 토글 -->
+                    <Button Content="♯ 반음" Command="{Binding ToggleSharpModeCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Setter Property="Padding" Value="8,3"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSharpMode}" Value="True">
+                                        <Setter Property="Background" Value="#FF007F"/>
+                                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="BorderBrush" Value="#FF007F"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- ================= 3옥타브 21키 QWERTY 건반 랙 ================= -->
+            <Border Background="#0C1018" BorderBrush="#203042" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,10">
+                <StackPanel HorizontalAlignment="Center">
+                    <!-- 고음역 (High Octave: Q ~ U) -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Border Width="65" Height="48" Margin="0,0,6,0" Background="#161A24" CornerRadius="6" VerticalAlignment="Center">
+                            <TextBlock Text="HIGH&#x0a;고음역" FontSize="10" FontWeight="Bold" Foreground="#FF007F" TextAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding HighOctaveKeys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="82" Height="48" Margin="2,0" CornerRadius="6" Background="#1A1C26" BorderBrush="#323548" BorderThickness="1.5" Cursor="Hand"
+                                            MouseLeftButtonDown="Key_MouseLeftButtonDown">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                        <Setter Property="Background" Value="#FF007F"/>
+                                                        <Setter Property="BorderBrush" Value="#FFFFFF"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect BlurRadius="12" Color="#FF007F" ShadowDepth="0"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding KeyChar}" FontSize="16" FontWeight="Black" HorizontalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock FontSize="9" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} ({1})">
+                                                        <Binding Path="NoteName"/>
+                                                        <Binding Path="NotePitch"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#7E8E9F"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- 중음역 (Mid Octave: A ~ J) -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Border Width="65" Height="48" Margin="0,0,6,0" Background="#161A24" CornerRadius="6" VerticalAlignment="Center">
+                            <TextBlock Text="MID&#x0a;중음역" FontSize="10" FontWeight="Bold" Foreground="#00F0FF" TextAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding MidOctaveKeys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="82" Height="48" Margin="2,0" CornerRadius="6" Background="#1A1C26" BorderBrush="#323548" BorderThickness="1.5" Cursor="Hand"
+                                            MouseLeftButtonDown="Key_MouseLeftButtonDown">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                        <Setter Property="Background" Value="#00F0FF"/>
+                                                        <Setter Property="BorderBrush" Value="#FFFFFF"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect BlurRadius="12" Color="#00F0FF" ShadowDepth="0"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding KeyChar}" FontSize="16" FontWeight="Black" HorizontalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#0A0A10"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock FontSize="9" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} ({1})">
+                                                        <Binding Path="NoteName"/>
+                                                        <Binding Path="NotePitch"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#7E8E9F"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#0A0A10"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- 저음역 (Low Octave: Z ~ M) -->
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="65" Height="48" Margin="0,0,6,0" Background="#161A24" CornerRadius="6" VerticalAlignment="Center">
+                            <TextBlock Text="LOW&#x0a;저음역" FontSize="10" FontWeight="Bold" Foreground="#FFE600" TextAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding LowOctaveKeys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="82" Height="48" Margin="2,0" CornerRadius="6" Background="#1A1C26" BorderBrush="#323548" BorderThickness="1.5" Cursor="Hand"
+                                            MouseLeftButtonDown="Key_MouseLeftButtonDown">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                        <Setter Property="Background" Value="#FFE600"/>
+                                                        <Setter Property="BorderBrush" Value="#FFFFFF"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect BlurRadius="12" Color="#FFE600" ShadowDepth="0"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding KeyChar}" FontSize="16" FontWeight="Black" HorizontalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#0A0A10"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock FontSize="9" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} ({1})">
+                                                        <Binding Path="NoteName"/>
+                                                        <Binding Path="NotePitch"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#7E8E9F"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#0A0A10"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ================= 음원 ➔ 멜로디 추출 패널 ================= -->
+            <Border Background="#18202E" CornerRadius="8" Padding="12,8" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 1행 좌측: 대상 음원 정보 & 추출 모드 선택기 -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,4">
+                        <TextBlock Text="대상 음원: " FontSize="11" Foreground="#8A9AA8" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TargetTrackTitle}" FontWeight="Bold" FontSize="11" Foreground="#FFE600" TextTrimming="CharacterEllipsis" MaxWidth="210" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                        <!-- 단일 전용 엔진 (Spotify Basic Pitch AI) -->
+                        <Border Background="#162E24" BorderBrush="#33FF88" BorderThickness="1" CornerRadius="4" Padding="8,2" Margin="0,0,4,0">
+                            <TextBlock Text="🤖 Spotify Basic Pitch AI" FontSize="10" FontWeight="Bold" Foreground="#33FF88" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 우측: 추출 실행 버튼 -->
+                    <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="🎵 음원 멜로디 추출 ➔ 쿼티 변환" Style="{StaticResource AccentButtonStyle}"
+                            Command="{Binding TranscribeCurrentTrackCommand}" Height="34" Padding="12,4" VerticalAlignment="Center"
+                            IsEnabled="{Binding IsTranscribing, Converter={StaticResource InvBoolToVis}}"/>
+
+                    <!-- 2행 좌측: 상태 메시지 & 프로그레스바 -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TranscribeStatus}" FontSize="10" Foreground="#00F0FF" TextTrimming="CharacterEllipsis"/>
+                        <ProgressBar Height="4" Minimum="0" Maximum="100" Value="{Binding TranscribeProgress}" Margin="0,4,12,0"
+                                     Foreground="#00F0FF" Background="#0C1018" BorderThickness="0"
+                                     Visibility="{Binding IsTranscribing, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ================= QWERTY 악보 텍스트 에디터 & 컨트롤러 ================= -->
+            <!-- 샘플 악보 프리셋 및 연주 속도 조절 바 -->
+            <Grid Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 좌측 악보 라벨 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🎼 21키 QWERTY 채보 악보" FontSize="11" FontWeight="Bold" Foreground="#00F0FF" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 우측 연주 템포/속도 조절 슬라이더 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="⏱ 연주 속도:" FontSize="10" Foreground="#8A9AA8" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <Slider Minimum="150" Maximum="600" Value="{Binding PlaySpeedMs}" Width="100" VerticalAlignment="Center"
+                            Style="{StaticResource CyanSliderStyle}" SmallChange="20" LargeChange="50"/>
+                    <TextBlock Text="{Binding PlaySpeedMs, StringFormat='{} {0}ms'}" FontSize="10" Foreground="#00F0FF" Width="45" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                </StackPanel>
+            </Grid>
+
+            <Border Background="#0C1018" BorderBrush="#203042" BorderThickness="1" CornerRadius="8" Padding="8" Margin="0,0,0,8">
+                <TextBox Text="{Binding SheetText, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="68"
+                         Background="Transparent" Foreground="#00FFCC" BorderThickness="0"
+                         FontFamily="Consolas, Courier New, monospace" FontSize="12"
+                         VerticalScrollBarVisibility="Auto"/>
+            </Border>
+
+            <!-- 하단 악보 연주 및 복사 버튼 바 -->
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <!-- 악보 자동 연주 -->
+                    <Button Content="▶ 악보 자동 연주"
+                            Command="{Binding AutoPlaySheetCommand}" Margin="0,0,4,0" Height="30">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAutoPlaying}" Value="True">
+                                        <Setter Property="Background" Value="#33FF88"/>
+                                        <Setter Property="Foreground" Value="#0A0A10"/>
+                                        <Setter Property="Content" Value="■ 연주 정지"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- 타건 실시간 녹음 -->
+                    <Button Content="⏺ 내 타건 녹음" Command="{Binding ToggleRecordingCommand}" Margin="0,0,4,0" Height="30">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RetroButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                                        <Setter Property="Background" Value="#FF3B30"/>
+                                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter Property="Content" Value="⏹ 녹음 중 (클릭 시 완료)"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="🗑️ 악보 지우기" Style="{StaticResource RetroButtonStyle}"
+                            Command="{Binding ClearSheetCommand}" Height="30"/>
+                </StackPanel>
+
+                <!-- 우측 클립보드 복사 -->
+                <Button Grid.Column="1" HorizontalAlignment="Right" Content="📋 원클릭 클립보드 복사"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Command="{Binding CopyToClipboardCommand}" Height="30" Padding="14,4"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>
